@@ -1309,6 +1309,24 @@ html:not(.dark) #editBar button { color: #0F172A; }
   </main>
 
   <!-- =====================================================================
+       SITE FOOTER WITH DISCREET OWNER ADMIN LINK
+  ====================================================================== -->
+  <footer class="container-shell py-8 border-t border-white/[0.08] text-xs text-slate-400 flex flex-wrap items-center justify-between gap-4">
+    <div class="flex items-center gap-2">
+      <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+      <span>&copy; <span id="footerYear">2026</span> <strong id="footerName" class="text-slate-200">Kamrul Hassan</strong>. Built with precision.</span>
+    </div>
+    <div class="flex items-center gap-4 font-mono text-[11.5px]">
+      <a id="footerGithub" href="https://github.com/Kamrul102" target="_blank" rel="noopener" class="hover:text-cyan-400 transition">GitHub ↗</a>
+      <a id="footerLinkedin" href="https://linkedin.com" target="_blank" rel="noopener" class="hover:text-cyan-400 transition">LinkedIn ↗</a>
+      <a href="admin.html" class="px-2.5 py-1 rounded-md border border-white/10 hover:border-cyan-400/50 bg-white/[0.03] text-slate-400 hover:text-cyan-300 transition flex items-center gap-1.5" title="Open Portfolio Admin Dashboard">
+        <span>Admin Hub</span>
+        <span>🔐</span>
+      </a>
+    </div>
+  </footer>
+
+  <!-- =====================================================================
        SLIDE-OVER 4-PILLAR TECHNICAL CASE STUDY DRAWER
   ====================================================================== -->
   <div id="archDrawerBackdrop" role="dialog" aria-modal="true" aria-label="Project case study" class="fixed inset-0 z-50 hidden justify-end bg-black/70 backdrop-blur-sm">
@@ -1458,6 +1476,9 @@ html:not(.dark) #editBar button { color: #0F172A; }
         </button>
         <button type="button" data-cmd="email" class="cmd-item w-full text-left px-3 py-2.5 rounded-lg hover:bg-blue-500/15 text-slate-200 flex items-center justify-between cursor-pointer">
           <span>Copy Email Address</span><span class="font-mono text-[10px] text-slate-400">Clipboard</span>
+        </button>
+        <button type="button" data-cmd="admin" class="cmd-item w-full text-left px-3 py-2.5 rounded-lg hover:bg-cyan-500/15 text-cyan-300 flex items-center justify-between cursor-pointer">
+          <span>Open Portfolio Admin Hub</span><span class="font-mono text-[10px] text-cyan-400">admin.html 🔐</span>
         </button>
       </div>
     </div>
@@ -2139,6 +2160,12 @@ html:not(.dark) #editBar button { color: #0F172A; }
 
     function exportStandaloneHtml() {
       const clone = document.documentElement.cloneNode(true);
+      clone.querySelectorAll('img[data-portr}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+      });
+    }
+
+    function exportStandaloneHtml() {
+      const clone = document.documentElement.cloneNode(true);
       clone.querySelectorAll('img[data-portrait="true"]').forEach(img => {
         if ((img.getAttribute('src') || '').startsWith('blob:')) img.setAttribute('src', 'portrait.jpg');
       });
@@ -2495,11 +2522,4 @@ html:not(.dark) #editBar button { color: #0F172A; }
     if (activeDb) track(activeDb);
     if (admin) parent.postMessage({ kh: 'ready' }, '*');
   };
-  let fin = false; const once = () => { if (!fin) { fin = true; done(); } };
-  setTimeout(once, 2500);
-  fetch('content.json?v=' + Date.now(), { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(c => { merge(c); once(); }).catch(once);
-})();
-
-  </script>
-</body>
-</html>
+  let fin = false; const once = () => { if 
