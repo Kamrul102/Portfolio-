@@ -1947,7 +1947,7 @@ html:not(.dark) #editBar button { color: #0F172A; }
     };
 
     const archBackdrop = document.getElementById('archDrawerBackdrop');
-    function openArchDrawer(key) {
+    window.openArchDrawer = function(key) {
       const item = archData[key];
       if (!item) return;
       document.getElementById('drawerCategory').textContent = item.category;
@@ -1964,28 +1964,32 @@ html:not(.dark) #editBar button { color: #0F172A; }
         .join('');
       archBackdrop.classList.remove('hidden');
       archBackdrop.classList.add('flex');
-    }
-    function closeArchDrawer() {
+    };
+    window.closeArchDrawer = function() {
       archBackdrop.classList.add('hidden');
       archBackdrop.classList.remove('flex');
-    }
+    };
     archBackdrop.addEventListener('click', e => {
       if (e.target === archBackdrop) closeArchDrawer();
     });
 
     // Executive Resume / CV Modal
     const resumeBackdrop = document.getElementById('resumeModalBackdrop');
-    function openResumeModal() {
+    window.openResumeModal = function() {
+      if (!resumeBackdrop) return;
       resumeBackdrop.classList.remove('hidden');
       resumeBackdrop.classList.add('flex');
-    }
-    function closeResumeModal() {
+    };
+    window.closeResumeModal = function() {
+      if (!resumeBackdrop) return;
       resumeBackdrop.classList.add('hidden');
       resumeBackdrop.classList.remove('flex');
+    };
+    if (resumeBackdrop) {
+      resumeBackdrop.addEventListener('click', e => {
+        if (e.target === resumeBackdrop) window.closeResumeModal();
+      });
     }
-    resumeBackdrop.addEventListener('click', e => {
-      if (e.target === resumeBackdrop) closeResumeModal();
-    });
 
     // Cmd+K Command Palette
     const cmdBackdrop = document.getElementById('cmdPaletteBackdrop');
@@ -2166,7 +2170,7 @@ html:not(.dark) #editBar button { color: #0F172A; }
               reply_to:   senderEmail
             });
             quickContactForm.reset();
-            showToast('✓ Message sent — I'll reply soon!');
+            showToast("✓ Message sent — I'll reply soon!");
           } catch (err) {
             console.error('EmailJS error:', err);
             showToast('Send failed — opening your mail app instead');
@@ -2265,7 +2269,6 @@ html:not(.dark) #editBar button { color: #0F172A; }
       if (mt && md) {
         mt.setAttribute('aria-expanded', 'false');
         mt.setAttribute('aria-controls', 'mobileNavDrawer');
-      }
       }
 
       // Dialogs: focus on open, trap Tab, restore focus on close
