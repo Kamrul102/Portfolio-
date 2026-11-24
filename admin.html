@@ -6,236 +6,842 @@
 <meta name="robots" content="noindex, nofollow" />
 <title>Admin — Kamrul Hassan Portfolio</title>
 <style>
-  :root { --bg:#050811; --bar:#0B1120; --line:rgba(59,130,246,.28); --text:#F8FAFC; --muted:#94A3B8; --blue:#3B82F6; --cyan:#22D3EE; --green:#10B981; --red:#F87171; }
-  * { box-sizing: border-box; font-family: Inter, system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
-  html, body { height: 100%; margin: 0; background: var(--bg); color: var(--text); }
-  body { display: flex; flex-direction: column; }
-  header { display: flex; align-items: center; gap: .5rem; padding: .6rem .9rem; background: var(--bar); border-bottom: 1px solid var(--line); flex-wrap: wrap; }
-  header h1 { font-size: 14px; margin: 0 .8rem 0 0; letter-spacing: -.01em; } header h1 span { color: var(--cyan); }
-  .sp { flex: 1; }
-  button, .lnk { border: 1px solid var(--line); background: rgba(59,130,246,.1); color: var(--text); font-size: 12.5px; font-weight: 600; padding: .5rem .85rem; border-radius: 10px; cursor: pointer; text-decoration: none; transition: transform .2s ease, background .2s ease; }
+  :root {
+    --bg:#050811; --bar:#0B1120; --line:rgba(59,130,246,.28);
+    --text:#F8FAFC; --muted:#94A3B8; --blue:#3B82F6; --cyan:#22D3EE;
+    --green:#10B981; --red:#F87171; --surface:#111A2E;
+  }
+  *, *::before, *::after { box-sizing: border-box; }
+  html, body { margin: 0; height: 100%; font-family: Inter, system-ui, -apple-system, "Segoe UI", Arial, sans-serif; }
+  body { background: var(--bg); color: var(--text); display: flex; flex-direction: column; min-height: 100vh; }
+
+  /* ── Top bar ── */
+  header {
+    display: flex; align-items: center; gap: .5rem;
+    padding: .6rem 1rem; background: var(--bar);
+    border-bottom: 1px solid var(--line); flex-wrap: wrap; flex-shrink: 0;
+    position: sticky; top: 0; z-index: 20;
+  }
+  header h1 { font-size: 14px; margin: 0 .6rem 0 0; white-space: nowrap; }
+  header h1 span { color: var(--cyan); }
+  .sp { flex: 1; min-width: 8px; }
+  button, .lnk {
+    border: 1px solid var(--line); background: rgba(59,130,246,.1);
+    color: var(--text); font-size: 12px; font-weight: 600;
+    padding: .45rem .8rem; border-radius: 10px; cursor: pointer;
+    text-decoration: none; white-space: nowrap;
+    transition: background .2s, transform .2s;
+  }
   button:hover, .lnk:hover { background: rgba(59,130,246,.25); transform: translateY(-1px); }
-  button:disabled { opacity: .45; cursor: not-allowed; transform: none; }
+  button:disabled { opacity: .4; cursor: not-allowed; transform: none; }
   button.on { background: var(--green); border-color: var(--green); }
   button.pub { background: var(--blue); border-color: var(--blue); position: relative; }
-  button.pub.dirty::after { content: ""; position: absolute; top: -4px; right: -4px; width: 10px; height: 10px; border-radius: 50%; background: #FBBF24; box-shadow: 0 0 0 3px var(--bar); }
-  iframe { flex: 1; width: 100%; border: 0; background: var(--bg); min-height: 300px; }
+  button.pub.dirty::after {
+    content: ""; position: absolute; top: -4px; right: -4px;
+    width: 10px; height: 10px; border-radius: 50%;
+    background: #FBBF24; box-shadow: 0 0 0 3px var(--bar);
+  }
 
-  /* analytics strip */
-  #stats { display: grid; grid-template-columns: 1.1fr repeat(3, 1fr) 1.6fr 1fr; gap: .6rem; padding: .7rem .9rem; background: #070C1A; border-bottom: 1px solid var(--line); animation: slide .5s cubic-bezier(.16,1,.3,1) both; }
+  /* ── Live analytics bar ── */
+  #stats {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr 1fr 1.8fr 1fr;
+    gap: .5rem; padding: .65rem 1rem;
+    background: #070C1A; border-bottom: 1px solid var(--line);
+    flex-shrink: 0;
+  }
   #stats.hide { display: none; }
-  @keyframes slide { from { opacity: 0; transform: translateY(-8px); } to { opacity: 1; transform: none; } }
-  .card { border: 1px solid rgba(255,255,255,.08); background: rgba(11,17,32,.9); border-radius: 12px; padding: .6rem .8rem; min-width: 0; }
-  .card small { display: block; color: var(--muted); font-size: 10.5px; text-transform: uppercase; letter-spacing: .08em; font-weight: 600; }
-  .card b { font-size: 26px; letter-spacing: -.02em; line-height: 1.2; font-variant-numeric: tabular-nums; }
-  .live b { color: var(--green); } .live small::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 6px; animation: pulse 1.6s infinite; }
+  .card { border: 1px solid rgba(255,255,255,.08); background: rgba(11,17,32,.9); border-radius: 12px; padding: .55rem .75rem; min-width: 0; }
+  .card small { display: block; color: var(--muted); font-size: 10px; text-transform: uppercase; letter-spacing: .07em; font-weight: 600; }
+  .card b { font-size: 22px; letter-spacing: -.02em; line-height: 1.2; font-variant-numeric: tabular-nums; }
+  .live b { color: var(--green); }
+  .live small::before { content: ""; display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: var(--green); margin-right: 5px; animation: pulse 1.6s infinite; }
   @keyframes pulse { 0% { box-shadow: 0 0 0 0 rgba(16,185,129,.7); } 100% { box-shadow: 0 0 0 9px rgba(16,185,129,0); } }
-  .bars { display: flex; align-items: flex-end; gap: 5px; height: 44px; margin-top: 4px; }
-  .bars i { flex: 1; background: linear-gradient(to top, var(--blue), var(--cyan)); border-radius: 4px 4px 0 0; min-height: 3px; transition: height .6s cubic-bezier(.16,1,.3,1); position: relative; }
+  .bars { display: flex; align-items: flex-end; gap: 4px; height: 40px; margin-top: 4px; }
+  .bars i { flex: 1; background: linear-gradient(to top, var(--blue), var(--cyan)); border-radius: 4px 4px 0 0; min-height: 3px; position: relative; }
   .bars i span { position: absolute; bottom: -15px; left: 50%; transform: translateX(-50%); font-size: 9px; color: var(--muted); font-style: normal; }
-  .dev { font-size: 12px; color: #CBD5E1; margin-top: 6px; line-height: 1.6; }
-  #statNote { grid-column: 1 / -1; font-size: 11.5px; color: var(--muted); display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; }
-  #statNote .tag { background: rgba(251,191,36,.15); color: #FBBF24; padding: .1rem .5rem; border-radius: 99px; font-weight: 700; font-size: 10.5px; }
-  #setup { display: none; grid-column: 1 / -1; }
-  #setup.show { display: block; }
-  @media (max-width: 900px) { #stats { grid-template-columns: 1fr 1fr; } }
+  .dev { font-size: 11.5px; color: #CBD5E1; margin-top: 5px; line-height: 1.6; }
+  #statNote { grid-column: 1 / -1; font-size: 11px; color: var(--muted); display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; }
+  #statNote .tag { background: rgba(251,191,36,.15); color: #FBBF24; padding: .1rem .45rem; border-radius: 99px; font-weight: 700; font-size: 10px; }
 
-  #msg { position: fixed; left: 50%; bottom: 1.2rem; transform: translateX(-50%) translateY(20px); background: #0D1322; border: 1px solid var(--line); padding: .6rem 1rem; border-radius: 999px; font-size: 12.5px; opacity: 0; pointer-events: none; transition: .3s; z-index: 9; max-width: 92vw; }
-  #msg.show { opacity: 1; transform: translateX(-50%); } #msg.err { border-color: var(--red); color: #FCA5A5; }
-  dialog { background: #0D1322; color: var(--text); border: 1px solid var(--line); border-radius: 16px; padding: 1.4rem; width: min(540px, 94vw); }
-  dialog::backdrop { background: rgba(2,6,23,.8); backdrop-filter: blur(4px); }
-  dialog h2 { margin: 0 0 .3rem; font-size: 16px; } p, li { color: var(--muted); font-size: 12.5px; line-height: 1.55; }
-  dialog ol { padding-left: 1.1rem; margin: .5rem 0 1rem; }
-  label { display: block; font-size: 12px; font-weight: 600; margin: .7rem 0 .25rem; }
-  input, textarea { width: 100%; padding: .6rem .75rem; border-radius: 10px; border: 1px solid rgba(255,255,255,.12); background: #060913; color: var(--text); font-size: 13px; }
-  textarea { font-family: ui-monospace, Menlo, monospace; font-size: 11.5px; resize: none; }
-  input:focus, textarea:focus { outline: 2px solid var(--cyan); }
-  .row { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+  /* ── Main content area ── */
+  main { flex: 1; padding: 1.5rem 1rem 2rem; max-width: 900px; width: 100%; margin: 0 auto; }
+
+  /* ── Section cards ── */
+  .section-card {
+    background: rgba(11,17,32,.92); border: 1px solid rgba(59,130,246,.2);
+    border-radius: 16px; padding: 1.25rem 1.5rem; margin-bottom: 1.25rem;
+  }
+  .section-title { font-size: 11px; font-weight: 700; text-transform: uppercase; letter-spacing: .1em; color: var(--cyan); margin: 0 0 1rem; }
+
+  /* ── Form controls ── */
+  label { display: block; font-size: 12px; font-weight: 600; color: var(--muted); margin: .9rem 0 .3rem; }
+  label:first-child { margin-top: 0; }
+  input, textarea, select {
+    width: 100%; padding: .6rem .8rem; border-radius: 10px;
+    border: 1px solid rgba(255,255,255,.12); background: #060913;
+    color: var(--text); font-size: 13px; font-family: inherit;
+  }
+  textarea { resize: vertical; font-family: ui-monospace, monospace; font-size: 12px; }
+  input:focus, textarea:focus { outline: 2px solid var(--cyan); border-color: transparent; }
+  .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+  .row3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: .75rem; }
   .actions { display: flex; gap: .5rem; justify-content: flex-end; margin-top: 1.1rem; flex-wrap: wrap; }
+  .btn-primary { background: var(--blue); border-color: var(--blue); }
+  .btn-green { background: var(--green); border-color: var(--green); }
+  .btn-red { background: rgba(248,113,113,.15); border-color: var(--red); color: var(--red); }
+
+  /* ── Certificate grid ── */
+  #certList { display: flex; flex-direction: column; gap: .75rem; margin-top: .5rem; }
+  .cert-item {
+    background: rgba(255,255,255,.03); border: 1px solid rgba(255,255,255,.08);
+    border-radius: 12px; padding: .9rem 1rem; display: flex; align-items: flex-start; gap: 1rem;
+  }
+  .cert-item .cert-info { flex: 1; min-width: 0; }
+  .cert-item .cert-tag { font-size: 10px; font-weight: 700; color: var(--cyan); font-family: monospace; }
+  .cert-item .cert-title { font-size: 13px; font-weight: 700; margin: .2rem 0 .1rem; }
+  .cert-item .cert-desc { font-size: 11.5px; color: var(--muted); }
+  .cert-item .cert-actions { display: flex; flex-direction: column; gap: .3rem; flex-shrink: 0; }
+  .cert-item .cert-actions button { font-size: 11px; padding: .3rem .5rem; }
+
+  /* ── Toast ── */
+  #toast {
+    position: fixed; left: 50%; bottom: 1.5rem;
+    transform: translateX(-50%) translateY(20px);
+    background: #0D1322; border: 1px solid var(--line);
+    padding: .6rem 1.2rem; border-radius: 999px; font-size: 12.5px;
+    opacity: 0; pointer-events: none; transition: .3s; z-index: 99; max-width: 90vw; text-align: center;
+  }
+  #toast.show { opacity: 1; transform: translateX(-50%); }
+  #toast.err { border-color: var(--red); color: #FCA5A5; }
+
+  /* ── Modal dialog ── */
+  dialog {
+    background: #0D1322; color: var(--text); border: 1px solid var(--line);
+    border-radius: 16px; padding: 1.4rem; width: min(560px, 94vw);
+    max-height: 90vh; overflow-y: auto;
+  }
+  dialog::backdrop { background: rgba(2,6,23,.85); backdrop-filter: blur(4px); }
+  dialog h2 { margin: 0 0 .5rem; font-size: 16px; }
+  dialog p, dialog li { color: var(--muted); font-size: 12.5px; line-height: 1.6; }
+  dialog ol { padding-left: 1.1rem; margin: .4rem 0 .8rem; }
+
+  /* ── Status badge ── */
+  .badge { display: inline-flex; align-items: center; gap: .4rem; font-size: 11px; font-weight: 600; padding: .2rem .65rem; border-radius: 99px; }
+  .badge.ok { background: rgba(16,185,129,.15); color: var(--green); border: 1px solid rgba(16,185,129,.35); }
+  .badge.warn { background: rgba(251,191,36,.12); color: #FBBF24; border: 1px solid rgba(251,191,36,.3); }
+
+  /* ── Info box ── */
+  .info-box { background: rgba(59,130,246,.08); border: 1px solid rgba(59,130,246,.25); border-radius: 10px; padding: .75rem 1rem; font-size: 12px; color: #93C5FD; line-height: 1.6; margin: .75rem 0 0; }
+  .info-box b { color: var(--cyan); }
+
+  /* ── Preview link ── */
+  .preview-bar {
+    display: flex; align-items: center; gap: .75rem; flex-wrap: wrap;
+    background: rgba(16,185,129,.07); border: 1px solid rgba(16,185,129,.25);
+    border-radius: 12px; padding: .75rem 1rem; margin-bottom: 1.25rem;
+  }
+  .preview-bar span { font-size: 12.5px; color: #6EE7B7; flex: 1; }
+  .preview-bar a { text-decoration: none; }
+
+  /* ── Responsive ── */
+  @media (max-width: 700px) {
+    header { gap: .3rem; padding: .5rem .75rem; }
+    header h1 { font-size: 12.5px; }
+    button, .lnk { font-size: 11px; padding: .4rem .6rem; }
+    #stats { grid-template-columns: 1fr 1fr; }
+    main { padding: 1rem .75rem 2rem; }
+    .row2, .row3 { grid-template-columns: 1fr; }
+    .section-card { padding: 1rem; }
+  }
+  @media (max-width: 420px) {
+    header h1 { display: none; }
+    button, .lnk { font-size: 10.5px; padding: .35rem .5rem; border-radius: 8px; }
+  }
 </style>
 </head>
 <body>
+
 <header>
   <h1>Portfolio <span>Admin</span></h1>
-  <button id="bEdit" type="button">✏️ Edit mode</button>
-  <button id="bAdd" type="button">＋ Certificate</button>
-  <button id="bProfile" type="button">⚙ Profile</button>
-  <button id="bStats" type="button">📊 Analytics</button>
+  <button id="bSave" class="btn-green" type="button">💾 Save Changes</button>
+  <button id="bAddCert" type="button">＋ Certificate</button>
   <span class="sp"></span>
-  <button id="bDiscard" type="button" title="Throw away unpublished changes">↺ Discard</button>
-  <button id="bDownload" type="button" title="Download content.json (no GitHub needed)">⬇ content.json</button>
-  <button id="bSettings" type="button">🔐 GitHub</button>
-  <a class="lnk" href="index.html" target="_blank" rel="noopener">View site ↗</a>
+  <button id="bStats" type="button">📊 Analytics</button>
+  <button id="bGitHub" type="button">🔐 GitHub</button>
   <button id="bPublish" class="pub" type="button">🚀 Publish</button>
+  <a class="lnk" id="previewLink" href="index.html" target="_blank" rel="noopener">👁 Preview ↗</a>
 </header>
 
-<section id="stats" aria-label="Visitor analytics">
+<!-- Analytics strip (hidden by default) -->
+<section id="stats" class="hide" aria-label="Visitor analytics">
   <div class="card live"><small>Viewing now</small><b id="sLive">–</b></div>
   <div class="card"><small>Views today</small><b id="sToday">–</b></div>
   <div class="card"><small>Last 7 days</small><b id="s7">–</b></div>
   <div class="card"><small>Total views</small><b id="sTotal">–</b></div>
-  <div class="card"><small>Daily views</small><div class="bars" id="sBars"></div></div>
+  <div class="card"><small>Daily chart</small><div class="bars" id="sBars"></div></div>
   <div class="card"><small>Devices</small><div class="dev" id="sDev">–</div></div>
-  <div id="statNote"><span id="statTag"></span><span id="statText"></span><button id="bDb" type="button" style="padding:.25rem .6rem;font-size:11px">⚙ Connect analytics</button></div>
+  <div id="statNote">
+    <span id="statTag"></span>
+    <span id="statText"></span>
+    <button id="bDb" type="button" style="padding:.25rem .6rem;font-size:11px">⚙ Connect analytics</button>
+  </div>
 </section>
 
-<iframe id="site" name="kh-admin" title="Portfolio editor" src="index.html?admin=1"></iframe>
-<div id="msg" role="status"></div>
+<main>
 
+  <!-- Preview bar -->
+  <div class="preview-bar">
+    <span>✅ Changes save to your browser. Use <b>Publish</b> to push to GitHub / your host.</span>
+    <a href="index.html" target="_blank" rel="noopener"><button type="button">👁 Open Portfolio ↗</button></a>
+  </div>
+
+  <!-- Profile section -->
+  <div class="section-card">
+    <p class="section-title">👤 Profile</p>
+    <div class="row2">
+      <div>
+        <label for="pName">Full Name</label>
+        <input id="pName" placeholder="Kamrul Hassan" />
+      </div>
+      <div>
+        <label for="pEmail">Email Address</label>
+        <input id="pEmail" type="email" placeholder="you@gmail.com" />
+      </div>
+    </div>
+    <div class="row2">
+      <div>
+        <label for="pGithub">GitHub URL</label>
+        <input id="pGithub" placeholder="https://github.com/username" />
+      </div>
+      <div>
+        <label for="pLinkedin">LinkedIn URL</label>
+        <input id="pLinkedin" placeholder="https://linkedin.com/in/username" />
+      </div>
+    </div>
+    <label for="pStatus">Status / Availability Pill</label>
+    <input id="pStatus" placeholder="AVAILABLE FOR SOFTWARE ENGINEERING ROLES · DHAKA / REMOTE" />
+    <label for="pBio">Bio (Executive)</label>
+    <textarea id="pBio" rows="3" placeholder="Short professional bio..."></textarea>
+  </div>
+
+  <!-- Contact form config -->
+  <div class="section-card">
+    <p class="section-title">📧 Contact Form / Email Setup</p>
+    <div class="row3">
+      <div>
+        <label for="ejsKey">EmailJS Public Key</label>
+        <input id="ejsKey" placeholder="YOUR_PUBLIC_KEY" />
+      </div>
+      <div>
+        <label for="ejsSvc">Service ID</label>
+        <input id="ejsSvc" placeholder="service_gmail" />
+      </div>
+      <div>
+        <label for="ejsTpl">Template ID</label>
+        <input id="ejsTpl" placeholder="template_contact" />
+      </div>
+    </div>
+    <div class="info-box">
+      <b>Free email setup (no server):</b><br>
+      1. Go to <b>emailjs.com</b> → free account → Add Gmail service → copy <b>Service ID</b><br>
+      2. Create template with <code>{{from_name}}</code>, <code>{{from_email}}</code>, <code>{{message}}</code> → copy <b>Template ID</b><br>
+      3. Account → General → copy <b>Public Key</b> → fill above → Save Changes → Publish
+    </div>
+  </div>
+
+  <!-- Certificates section -->
+  <div class="section-card">
+    <p class="section-title">🏆 Certificates &amp; Credentials</p>
+    <div id="certList"></div>
+    <div class="actions" style="margin-top:.85rem">
+      <button id="bAddCert2" type="button" class="btn-primary">＋ Add Certificate</button>
+    </div>
+  </div>
+
+  <!-- Analytics section -->
+  <div class="section-card">
+    <p class="section-title">📊 Visitor Analytics (Firebase Realtime Database)</p>
+    <div id="analyticsStatusBadge" style="margin-bottom:.6rem"></div>
+    <label for="firebaseDbInput">Firebase Realtime Database URL</label>
+    <input id="firebaseDbInput" placeholder="https://your-project-default-rtdb.firebaseio.com" />
+    <div class="info-box" style="margin-top:.75rem">
+      <b>Visitor Analytics চালু করার নিয়ম (মাত্র ২ মিনিট):</b><br>
+      ১. <a href="https://console.firebase.google.com" target="_blank" rel="noopener" style="color:var(--cyan);font-weight:bold">console.firebase.google.com</a> এ গিয়ে একটি ফ্রি প্রজেক্ট খুলুন।<br>
+      ২. বাঁপাশের মেনু থেকে <b>Build → Realtime Database → Create Database</b> ক্লিক করুন।<br>
+      ৩. <b>Rules</b> ট্যাবে গিয়ে নিচের কোডটি পেস্ট করে <b>Publish</b> দিন:<br>
+      <pre style="background:rgba(0,0,0,.4);padding:.5rem;border-radius:6px;color:#67E8F9;font-size:11px;margin:.4rem 0">{
+  "rules": {
+    ".read": false,
+    ".write": false,
+    "stats":    { ".read": true, ".write": true },
+    "presence": { ".read": true, ".write": true }
+  }
+}</pre>
+      ৪. উপরে থাকা ডেটাবেজ URL (যেমন <code>https://xxx-default-rtdb.firebaseio.com</code>) কপি করে এখানে পেস্ট করুন এবং <b>Save All Changes</b> চাপুন।
+    </div>
+    <div class="actions" style="margin-top:.85rem">
+      <button id="bTestDbBtn" type="button">🔍 Test Connection</button>
+    </div>
+  </div>
+
+  <!-- Project links -->
+  <div class="section-card">
+    <p class="section-title">🔗 Project Links</p>
+    <div class="row2">
+      <div>
+        <label>Hisab — Code URL</label>
+        <input id="plHisabCode" placeholder="https://github.com/..." />
+      </div>
+      <div>
+        <label>Hisab — Live Demo URL</label>
+        <input id="plHisabLive" placeholder="https://..." />
+      </div>
+    </div>
+    <div class="row2">
+      <div>
+        <label>SkillSwap — Code URL</label>
+        <input id="plSkillswapCode" placeholder="https://github.com/..." />
+      </div>
+      <div>
+        <label>SkillSwap — Live Demo URL</label>
+        <input id="plSkillswapLive" placeholder="https://..." />
+      </div>
+    </div>
+    <div class="row2">
+      <div>
+        <label>Campus Ride — Code URL</label>
+        <input id="plCampusrideCode" placeholder="https://github.com/..." />
+      </div>
+      <div>
+        <label>Campus Ride — Live Demo URL</label>
+        <input id="plCampusrideLive" placeholder="https://..." />
+      </div>
+    </div>
+    <div class="row2">
+      <div>
+        <label>Metro Rail — Code URL</label>
+        <input id="plMetrorailCode" placeholder="https://github.com/..." />
+      </div>
+      <div>
+        <label>Metro Rail — Live Demo URL</label>
+        <input id="plMetrorailLive" placeholder="https://..." />
+      </div>
+    </div>
+  </div>
+
+  <!-- Save button (bottom) -->
+  <div class="actions">
+    <button id="bSave2" class="btn-green" type="button" style="padding:.6rem 1.5rem;font-size:14px">💾 Save All Changes</button>
+  </div>
+
+</main>
+
+<!-- Toast -->
+<div id="toast" role="status"></div>
+
+<!-- GitHub dialog -->
 <dialog id="dlgGh">
-  <h2>🔐 GitHub connection</h2>
-  <p>Only someone with <b>your GitHub token</b> can publish. It is saved only in this browser.</p>
+  <h2>🔐 GitHub — Publish Settings</h2>
+  <p>Your token is saved only in this browser (localStorage). Never shared.</p>
   <ol>
     <li>GitHub → Settings → Developer settings → <b>Fine-grained tokens</b> → Generate new token.</li>
     <li>Repository access: <b>only your portfolio repo</b>. Permission: <b>Contents → Read and write</b>.</li>
-    <li>Your site must deploy from this repo (GitHub Pages, Netlify or Vercel).</li>
+    <li>Your site must deploy from that repo (GitHub Pages, Netlify, or Vercel).</li>
   </ol>
-  <div class="row"><div><label for="gOwner">GitHub username</label><input id="gOwner" placeholder="Kamrul102" /></div><div><label for="gRepo">Repository name</label><input id="gRepo" placeholder="portfolio" /></div></div>
-  <div class="row"><div><label for="gBranch">Branch</label><input id="gBranch" placeholder="main" /></div><div><label for="gDir">Folder (optional)</label><input id="gDir" placeholder="empty = repo root" /></div></div>
-  <label for="gToken">Access token</label><input id="gToken" type="password" autocomplete="off" placeholder="github_pat_…" />
-  <div class="actions"><button id="gClear" type="button">Remove token</button><button id="gCancel" type="button">Cancel</button><button id="gSave" class="pub" type="button">Save</button></div>
+  <div class="row2">
+    <div><label for="gOwner">GitHub Username</label><input id="gOwner" placeholder="Kamrul102" /></div>
+    <div><label for="gRepo">Repository Name</label><input id="gRepo" placeholder="portfolio" /></div>
+  </div>
+  <div class="row2">
+    <div><label for="gBranch">Branch</label><input id="gBranch" placeholder="main" /></div>
+    <div><label for="gDir">Folder (optional)</label><input id="gDir" placeholder="leave empty = repo root" /></div>
+  </div>
+  <label for="gToken">Personal Access Token</label>
+  <input id="gToken" type="password" autocomplete="off" placeholder="github_pat_…" />
+  <div class="actions">
+    <button id="gClear" type="button" class="btn-red">Remove Token</button>
+    <button id="gCancel" type="button">Cancel</button>
+    <button id="gSave" type="button" class="btn-primary">Save</button>
+  </div>
 </dialog>
 
+<!-- Analytics dialog -->
 <dialog id="dlgDb">
-  <h2>📊 Connect live analytics</h2>
-  <p>Free, 2-minute setup with Firebase Realtime Database (no server needed).</p>
+  <h2>📊 Connect Live Analytics</h2>
+  <p>Free 2-minute setup using Firebase Realtime Database (no server needed).</p>
   <ol>
-    <li>console.firebase.google.com → create/open a project → <b>Build → Realtime Database → Create</b>.</li>
-    <li>Open the <b>Rules</b> tab, paste the rules below, press Publish.</li>
-    <li>Copy the database URL (looks like <b>https://xxxx-default-rtdb.firebaseio.com</b>) and paste it here, then <b>Publish</b> the site once.</li>
+    <li>console.firebase.google.com → create project → <b>Build → Realtime Database → Create</b></li>
+    <li>Open <b>Rules</b> tab → paste rules below → Publish</li>
+    <li>Copy the database URL and paste below → Save → Publish the site once</li>
   </ol>
-  <textarea id="rulesBox" rows="9" readonly></textarea>
-  <label for="dbUrl">Database URL</label><input id="dbUrl" placeholder="https://your-project-default-rtdb.firebaseio.com" />
-  <div class="actions"><button id="dbCopy" type="button">Copy rules</button><button id="dbCancel" type="button">Cancel</button><button id="dbSave" class="pub" type="button">Save</button></div>
+  <label>Firebase Rules (copy & paste into Firebase console)</label>
+  <textarea id="rulesBox" rows="8" readonly></textarea>
+  <label for="dbUrl">Database URL</label>
+  <input id="dbUrl" placeholder="https://your-project-default-rtdb.firebaseio.com" />
+  <div class="actions">
+    <button id="dbCopy" type="button">📋 Copy Rules</button>
+    <button id="dbCancel" type="button">Cancel</button>
+    <button id="dbSave" type="button" class="btn-primary">Save</button>
+  </div>
+</dialog>
+
+<!-- Certificate edit dialog -->
+<dialog id="dlgCert">
+  <h2 id="dlgCertTitle">✏️ Certificate</h2>
+  <input type="hidden" id="certEditIdx" value="-1" />
+  <label for="ceTag">Issuer &amp; Year (e.g. PHITRON • 2025)</label>
+  <input id="ceTag" placeholder="PHITRON • 2025" />
+  <label for="ceTitle">Certificate Title</label>
+  <input id="ceTitle" placeholder="CSE Fundamentals &amp; Problem Solving" />
+  <label for="ceDesc">Description</label>
+  <textarea id="ceDesc" rows="3" placeholder="What this certificate covers..."></textarea>
+  <label for="ceLink">Credential URL (optional)</label>
+  <input id="ceLink" placeholder="https://..." />
+  <div class="actions">
+    <button id="ceCancelBtn" type="button">Cancel</button>
+    <button id="ceSaveBtn" type="button" class="btn-primary">Save Certificate</button>
+  </div>
 </dialog>
 
 <script>
 (function () {
-  const DEMO = /[?&]demo\b/.test(location.search) || window.KH_DEMO === true;
-  const $ = s => document.querySelector(s), frame = $('#site'), CK = 'kh_gh_cfg', DK = 'kh_db_url';
-  const msg = (t, err) => { const m = $('#msg'); m.textContent = t; m.className = 'show' + (err ? ' err' : ''); clearTimeout(msg.t); msg.t = setTimeout(() => m.className = '', err ? 6000 : 3200); };
-  const cfg = () => { try { return JSON.parse(localStorage.getItem(CK)) || {}; } catch (e) { return {}; } };
-  const lget = k => { try { return localStorage.getItem(k) || ''; } catch (e) { return ''; } };
-  let editing = false, dirty = false;
-  const setDirty = d => { dirty = d; $('#bPublish').classList.toggle('dirty', d); };
+  /* ══════════════════════════════════════════════════════
+     STATE  — loaded from localStorage, saved on each change
+  ══════════════════════════════════════════════════════ */
+  const STORE_KEY = 'kh_admin_v1';
+  const GH_KEY    = 'kh_gh_cfg';
+  const DB_KEY    = 'kh_db_url';
 
-  /* ---- messaging with the site editor (works even when opened from a file) ---- */
-  let rid = 0; const pend = {};
-  function call(fn, ...args) {
-    return new Promise((res, rej) => {
-      const id = ++rid; pend[id] = res;
-      try { frame.contentWindow.postMessage({ kh: 'rpc', id, fn, args }, '*'); } catch (e) { return rej(e); }
-      setTimeout(() => { if (pend[id]) { delete pend[id]; rej(new Error('Editor not ready yet — wait a second and try again')); } }, 4000);
-    });
-  }
-  const safe = p => p.catch(e => { msg(e.message, 1); return null; });
-  addEventListener('message', e => {
-    const d = e.data; if (!d || !d.kh) return;
-    if (d.kh === 'res' && pend[d.id]) { pend[d.id](d.res); delete pend[d.id]; }
-    if (d.kh === 'changed') setDirty(true);
-    if (d.kh === 'ready' && editing) call('setEditing', true).catch(() => {});
-  });
-
-  $('#bEdit').onclick = async () => { editing = !editing; const ok = await safe(call('setEditing', editing)); if (ok === null && !editing) {} $('#bEdit').classList.toggle('on', editing); $('#bEdit').textContent = editing ? '✓ Editing — click any text' : '✏️ Edit mode'; };
-  $('#bAdd').onclick = async () => { if (!editing) await $('#bEdit').onclick(); safe(call('addCert')); };
-  $('#bProfile').onclick = () => safe(call('openProfile'));
-  $('#bDiscard').onclick = () => { if (confirm('Discard all unpublished changes?')) { setDirty(false); safe(call('discard')); } };
-  addEventListener('beforeunload', e => { if (dirty) { e.preventDefault(); e.returnValue = ''; } });
-
-  /* ---- GitHub settings + publish ---- */
-  const dGh = $('#dlgGh');
-  const openGh = () => { const c = cfg(); $('#gOwner').value = c.owner || 'Kamrul102'; $('#gRepo').value = c.repo || ''; $('#gBranch').value = c.branch || 'main'; $('#gDir').value = c.dir || ''; $('#gToken').value = c.token || ''; dGh.showModal(); };
-  $('#bSettings').onclick = openGh; $('#gCancel').onclick = () => dGh.close();
-  $('#gClear').onclick = () => { const c = cfg(); delete c.token; localStorage.setItem(CK, JSON.stringify(c)); $('#gToken').value = ''; msg('Token removed from this browser'); };
-  $('#gSave').onclick = () => {
-    const c = { owner: $('#gOwner').value.trim(), repo: $('#gRepo').value.trim(), branch: $('#gBranch').value.trim() || 'main', dir: $('#gDir').value.trim().replace(/^\/+|\/+$/g, ''), token: $('#gToken').value.trim() };
-    if (!c.owner || !c.repo || !c.token) return msg('Username, repository and token are required', 1);
-    localStorage.setItem(CK, JSON.stringify(c)); dGh.close(); msg('GitHub settings saved');
+  const DEFAULT_STATE = {
+    profile: {
+      name:     'Kamrul Hassan',
+      email:    'kamrul.hassan0244@gmail.com',
+      github:   'https://github.com/Kamrul102',
+      linkedin: 'https://www.linkedin.com/in/kamrul-hassan-4386513b7',
+      status:   'AVAILABLE FOR SOFTWARE ENGINEERING ROLES · DHAKA / REMOTE',
+      bio:      'I build web applications with React, Node.js and Firebase — from a shared-housing ledger to a concurrent seat-reservation system. CSE undergraduate at Manarat International University, graduating in 2027.'
+    },
+    emailjs: { publicKey: '', serviceId: '', templateId: '' },
+    certs: [
+      { tag: 'PHITRON • 2025', title: 'CSE Fundamentals & Problem Solving', desc: 'Data Structures, Algorithms, C++, and Python Software Engineering.', link: '' },
+      { tag: 'AI & ML TRACK • 2025', title: 'Applied Machine Learning Specialization', desc: 'Supervised Learning, Feature Engineering, and Model Evaluation Pipelines.', link: '' },
+      { tag: 'SECURITY & WEB • 2024', title: 'Full-Stack Web & Penetration Testing', desc: 'Modern React/Node Architecture & Web Application Security Fundamentals.', link: '' }
+    ],
+    projectLinks: {
+      hisab:      { code: '', live: '' },
+      skillswap:  { code: '', live: '' },
+      campusride: { code: '', live: '' },
+      metrorail:  { code: '', live: '' }
+    }
   };
-  const b64 = s => btoa(unescape(encodeURIComponent(s)));
-  const H = c => ({ Authorization: 'Bearer ' + c.token, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' });
-  const gurl = (c, p) => `https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}/contents/${p.split('/').map(encodeURIComponent).join('/')}`;
-  async function put(c, path, content64, note) {
-    const p = (c.dir ? c.dir + '/' : '') + path; let sha;
-    const r0 = await fetch(gurl(c, p) + '?ref=' + encodeURIComponent(c.branch), { headers: H(c) });
-    if (r0.ok) sha = (await r0.json()).sha; else if (r0.status === 401 || r0.status === 403) throw new Error('Token rejected — needs permission Contents: Read and write'); else if (r0.status !== 404) throw new Error('GitHub error ' + r0.status);
-    const r = await fetch(gurl(c, p), { method: 'PUT', headers: Object.assign({ 'Content-Type': 'application/json' }, H(c)), body: JSON.stringify({ message: note, content: content64, branch: c.branch, sha }) });
-    if (!r.ok) { let m = ''; try { m = (await r.json()).message; } catch (e) {} throw new Error('Publish failed (' + r.status + ') ' + m); }
-  }
-  const withAnalytics = d => { const u = lget(DK); if (u) d.analytics = { dbUrl: u }; return d; };
 
-  $('#bPublish').onclick = async () => {
-    if (DEMO) return msg('Demo mode: on your real site this commits your changes to GitHub');
-    const c = cfg(); if (!c.token || !c.repo) { msg('Set up your GitHub connection first', 1); return openGh(); }
-    const btn = $('#bPublish'); btn.disabled = true;
+  function loadState() {
+    try { return Object.assign({}, DEFAULT_STATE, JSON.parse(localStorage.getItem(STORE_KEY) || '{}')); }
+    catch (e) { return Object.assign({}, DEFAULT_STATE); }
+  }
+  function saveState(st) {
+    try { localStorage.setItem(STORE_KEY, JSON.stringify(st)); } catch (e) { toast('⚠️ Storage full — export soon', true); }
+  }
+
+  let state = loadState();
+
+  /* ══════════════════════════════════════════════════════
+     TOAST
+  ══════════════════════════════════════════════════════ */
+  let toastTimer = 0;
+  function toast(msg, err) {
+    const el = document.getElementById('toast');
+    el.textContent = msg;
+    el.className = 'show' + (err ? ' err' : '');
+    clearTimeout(toastTimer);
+    toastTimer = setTimeout(() => el.className = '', err ? 6000 : 3000);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     POPULATE FORM FROM STATE
+  ══════════════════════════════════════════════════════ */
+  function populateForms() {
+    const p = state.profile || {};
+    document.getElementById('pName').value     = p.name     || '';
+    document.getElementById('pEmail').value    = p.email    || '';
+    document.getElementById('pGithub').value   = p.github   || '';
+    document.getElementById('pLinkedin').value = p.linkedin || '';
+    document.getElementById('pStatus').value   = p.status   || '';
+    document.getElementById('pBio').value      = p.bio      || '';
+
+    const ejs = state.emailjs || {};
+    document.getElementById('ejsKey').value = ejs.publicKey  || '';
+    document.getElementById('ejsSvc').value = ejs.serviceId  || '';
+    document.getElementById('ejsTpl').value = ejs.templateId || '';
+
+    const pl = state.projectLinks || {};
+    document.getElementById('plHisabCode').value      = (pl.hisab      || {}).code || '';
+    document.getElementById('plHisabLive').value      = (pl.hisab      || {}).live || '';
+    document.getElementById('plSkillswapCode').value  = (pl.skillswap  || {}).code || '';
+    document.getElementById('plSkillswapLive').value  = (pl.skillswap  || {}).live || '';
+    document.getElementById('plCampusrideCode').value = (pl.campusride || {}).code || '';
+    document.getElementById('plCampusrideLive').value = (pl.campusride || {}).live || '';
+    document.getElementById('plMetrorailCode').value  = (pl.metrorail  || {}).code || '';
+    document.getElementById('plMetrorailLive').value  = (pl.metrorail  || {}).live || '';
+
+    // Firebase database URL
+    const savedDbUrl = localStorage.getItem(DB_KEY) || (state.analytics || {}).dbUrl || '';
+    document.getElementById('firebaseDbInput').value = savedDbUrl;
+    updateDbBadge(savedDbUrl);
+
+    renderCerts();
+  }
+
+  function updateDbBadge(u) {
+    const badge = document.getElementById('analyticsStatusBadge');
+    if (!badge) return;
+    if (u) {
+      badge.innerHTML = '<span class="badge ok">● Firebase Connected</span> <span style="font-size:12px;color:var(--muted)">Visitors will be counted automatically</span>';
+    } else {
+      badge.innerHTML = '<span class="badge warn">○ Not Connected</span> <span style="font-size:12px;color:var(--muted)">Enter Firebase Realtime Database URL to start tracking</span>';
+    }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     COLLECT FORM → STATE
+  ══════════════════════════════════════════════════════ */
+  function collectForms() {
+    state.profile = {
+      name:     document.getElementById('pName').value.trim()     || 'Kamrul Hassan',
+      email:    document.getElementById('pEmail').value.trim()    || 'kamrul.hassan0244@gmail.com',
+      github:   document.getElementById('pGithub').value.trim()   || '',
+      linkedin: document.getElementById('pLinkedin').value.trim() || '',
+      status:   document.getElementById('pStatus').value.trim()   || '',
+      bio:      document.getElementById('pBio').value.trim()      || ''
+    };
+    state.emailjs = {
+      publicKey:  document.getElementById('ejsKey').value.trim(),
+      serviceId:  document.getElementById('ejsSvc').value.trim(),
+      templateId: document.getElementById('ejsTpl').value.trim()
+    };
+    state.projectLinks = {
+      hisab:      { code: document.getElementById('plHisabCode').value.trim(),      live: document.getElementById('plHisabLive').value.trim() },
+      skillswap:  { code: document.getElementById('plSkillswapCode').value.trim(),  live: document.getElementById('plSkillswapLive').value.trim() },
+      campusride: { code: document.getElementById('plCampusrideCode').value.trim(), live: document.getElementById('plCampusrideLive').value.trim() },
+      metrorail:  { code: document.getElementById('plMetrorailCode').value.trim(),  live: document.getElementById('plMetrorailLive').value.trim() }
+    };
+    const dbVal = document.getElementById('firebaseDbInput').value.trim().replace(/\/+$/, '');
+    state.analytics = { dbUrl: dbVal };
+    if (dbVal) {
+      localStorage.setItem(DB_KEY, dbVal);
+    } else {
+      localStorage.removeItem(DB_KEY);
+    }
+    updateDbBadge(dbVal);
+  }
+
+  /* ══════════════════════════════════════════════════════
+     SAVE BUTTON — saves to localStorage + patches index.html
+  ══════════════════════════════════════════════════════ */
+  function doSave() {
+    collectForms();
+    saveState(state);
+    patchIndexHtml(state);
+    startStats();
+    toast('✅ Saved! Changes applied.');
+    document.getElementById('bPublish').classList.add('dirty');
+  }
+  document.getElementById('bSave').onclick  = doSave;
+  document.getElementById('bSave2').onclick = doSave;
+
+  /* ══════════════════════════════════════════════════════
+     PATCH index.html — writes updated SITE config & certs
+  ══════════════════════════════════════════════════════ */
+  function patchIndexHtml(st) {
     try {
-      const data = withAnalytics(await call('content')); const stamp = Date.now().toString(36);
-      for (let i = 0; i < data.certs.length; i++) {
-        const im = data.certs[i].img;
-        if (im && im.startsWith('data:')) { msg(`Uploading image ${i + 1}/${data.certs.length}…`); const name = `certs/${stamp}-${i}.jpg`; await put(c, name, im.split(',')[1], 'Add certificate image'); data.certs[i].img = name; }
+      localStorage.setItem('kh_pending_patch', JSON.stringify({
+        profile:       st.profile,
+        emailjs:       st.emailjs,
+        certs:         st.certs,
+        projectLinks:  st.projectLinks,
+        firebaseDbUrl: (st.analytics || {}).dbUrl || localStorage.getItem(DB_KEY) || '',
+        patchedAt:     Date.now()
+      }));
+    } catch (e) {}
+  }
+
+  // Database Connection Test
+  document.getElementById('bTestDbBtn').onclick = async () => {
+    const u = document.getElementById('firebaseDbInput').value.trim().replace(/\/+$/, '');
+    if (!u) return toast('Please enter a Firebase Database URL first', true);
+    if (!/^https:\/\/.+\.(firebaseio\.com|firebasedatabase\.app)$/.test(u)) return toast('That does not look like a Firebase Realtime Database URL', true);
+    toast('Testing database connection…');
+    try {
+      const res = await fetch(u + '/stats.json');
+      if (res.ok) {
+        toast('🎉 Connection successful! Firebase is ready.');
+        localStorage.setItem(DB_KEY, u);
+        updateDbBadge(u);
+        startStats();
+      } else {
+        throw new Error('HTTP ' + res.status);
       }
-      msg('Publishing content…'); await put(c, 'content.json', b64(JSON.stringify(data, null, 2)), 'Update portfolio content');
-      await call('replace', data); setDirty(false); msg('✓ Published! Your host updates the live site in about a minute.');
-    } catch (e) { msg(String(e.message || e), 1); } finally { btn.disabled = false; }
-  };
-  $('#bDownload').onclick = async () => {
-    const data = await safe(call('content')); if (!data) return; withAnalytics(data);
-    const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' })); a.download = 'content.json'; a.click(); URL.revokeObjectURL(a.href);
-    msg('Downloaded content.json — upload it next to index.html on your host');
+    } catch (err) {
+      toast('❌ Cannot reach Firebase. Check URL and make sure Rules are published.', true);
+    }
   };
 
-  /* ---- Analytics ---- */
+  /* ══════════════════════════════════════════════════════
+     CERTIFICATES
+  ══════════════════════════════════════════════════════ */
+  const CERT_COLORS = ['#22D3EE', '#60A5FA', '#34D399'];
+
+  function renderCerts() {
+    const list = document.getElementById('certList');
+    if (!state.certs || !state.certs.length) {
+      list.innerHTML = '<p style="color:var(--muted);font-size:13px;text-align:center;padding:1rem">No certificates yet. Click "Add Certificate" to add one.</p>';
+      return;
+    }
+    list.innerHTML = state.certs.map((c, i) => `
+      <div class="cert-item">
+        <div class="cert-info">
+          <div class="cert-tag" style="color:${CERT_COLORS[i % 3]}">${esc(c.tag)}</div>
+          <div class="cert-title">${esc(c.title)}</div>
+          <div class="cert-desc">${esc(c.desc)}</div>
+          ${c.link ? `<a href="${esc(c.link)}" target="_blank" rel="noopener" style="font-size:11px;color:var(--cyan)">View credential ↗</a>` : ''}
+        </div>
+        <div class="cert-actions">
+          <button type="button" onclick="editCert(${i})">✏️ Edit</button>
+          <button type="button" onclick="moveCert(${i},-1)" ${i===0?'disabled':''}>↑</button>
+          <button type="button" onclick="moveCert(${i},1)" ${i===state.certs.length-1?'disabled':''}>↓</button>
+          <button type="button" class="btn-red" onclick="deleteCert(${i})">🗑</button>
+        </div>
+      </div>
+    `).join('');
+  }
+
+  function esc(t) {
+    return String(t || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  }
+
+  window.editCert = function (i) {
+    const c = state.certs[i] || {};
+    document.getElementById('certEditIdx').value  = i;
+    document.getElementById('ceTag').value        = c.tag   || '';
+    document.getElementById('ceTitle').value      = c.title || '';
+    document.getElementById('ceDesc').value       = c.desc  || '';
+    document.getElementById('ceLink').value       = c.link  || '';
+    document.getElementById('dlgCertTitle').textContent = '✏️ Edit Certificate';
+    document.getElementById('dlgCert').showModal();
+  };
+
+  window.moveCert = function (i, dir) {
+    const c = state.certs;
+    const j = i + dir;
+    if (j < 0 || j >= c.length) return;
+    [c[i], c[j]] = [c[j], c[i]];
+    saveState(state);
+    renderCerts();
+  };
+
+  window.deleteCert = function (i) {
+    if (!confirm('Delete this certificate?')) return;
+    state.certs.splice(i, 1);
+    saveState(state);
+    renderCerts();
+    toast('Certificate deleted');
+  };
+
+  function openAddCert() {
+    document.getElementById('certEditIdx').value = -1;
+    document.getElementById('ceTag').value       = '';
+    document.getElementById('ceTitle').value     = '';
+    document.getElementById('ceDesc').value      = '';
+    document.getElementById('ceLink').value      = '';
+    document.getElementById('dlgCertTitle').textContent = '＋ Add Certificate';
+    document.getElementById('dlgCert').showModal();
+  }
+  document.getElementById('bAddCert').onclick  = openAddCert;
+  document.getElementById('bAddCert2').onclick = openAddCert;
+
+  document.getElementById('ceSaveBtn').onclick = function () {
+    const idx   = parseInt(document.getElementById('certEditIdx').value);
+    const entry = {
+      tag:   document.getElementById('ceTag').value.trim()   || 'ISSUER • ' + new Date().getFullYear(),
+      title: document.getElementById('ceTitle').value.trim() || 'Certificate title',
+      desc:  document.getElementById('ceDesc').value.trim()  || '',
+      link:  document.getElementById('ceLink').value.trim()  || ''
+    };
+    if (idx === -1) state.certs.push(entry);
+    else state.certs[idx] = entry;
+    saveState(state);
+    renderCerts();
+    document.getElementById('dlgCert').close();
+    toast(idx === -1 ? '✅ Certificate added' : '✅ Certificate updated');
+    document.getElementById('bPublish').classList.add('dirty');
+  };
+  document.getElementById('ceCancelBtn').onclick = () => document.getElementById('dlgCert').close();
+
+  /* ══════════════════════════════════════════════════════
+     GITHUB PUBLISH
+  ══════════════════════════════════════════════════════ */
+  const dlgGh = document.getElementById('dlgGh');
+  document.getElementById('bGitHub').onclick = () => {
+    const c = ghCfg();
+    document.getElementById('gOwner').value  = c.owner  || '';
+    document.getElementById('gRepo').value   = c.repo   || '';
+    document.getElementById('gBranch').value = c.branch || 'main';
+    document.getElementById('gDir').value    = c.dir    || '';
+    document.getElementById('gToken').value  = c.token  || '';
+    dlgGh.showModal();
+  };
+  document.getElementById('gCancel').onclick = () => dlgGh.close();
+  document.getElementById('gClear').onclick  = () => {
+    const c = ghCfg(); delete c.token;
+    localStorage.setItem(GH_KEY, JSON.stringify(c));
+    document.getElementById('gToken').value = '';
+    toast('Token removed');
+  };
+  document.getElementById('gSave').onclick = () => {
+    const c = {
+      owner:  document.getElementById('gOwner').value.trim(),
+      repo:   document.getElementById('gRepo').value.trim(),
+      branch: document.getElementById('gBranch').value.trim() || 'main',
+      dir:    document.getElementById('gDir').value.trim().replace(/^\/+|\/+$/g, ''),
+      token:  document.getElementById('gToken').value.trim()
+    };
+    if (!c.owner || !c.repo || !c.token) return toast('Username, repository and token are required', true);
+    localStorage.setItem(GH_KEY, JSON.stringify(c));
+    dlgGh.close();
+    toast('GitHub settings saved ✅');
+  };
+
+  function ghCfg() { try { return JSON.parse(localStorage.getItem(GH_KEY) || '{}'); } catch (e) { return {}; } }
+
+  /* ── Publish to GitHub ── */
+  document.getElementById('bPublish').onclick = async () => {
+    collectForms();
+    saveState(state);
+    const c = ghCfg();
+    if (!c.token || !c.repo) {
+      toast('Set up GitHub connection first', true);
+      document.getElementById('bGitHub').click();
+      return;
+    }
+    const btn = document.getElementById('bPublish');
+    btn.disabled = true;
+    try {
+      // Build content.json
+      const content = {
+        profile:      state.profile,
+        emailjs:      state.emailjs,
+        certs:        state.certs,
+        projectLinks: state.projectLinks,
+        analytics:    { dbUrl: (localStorage.getItem(DB_KEY) || '') },
+        dbUrl:        (localStorage.getItem(DB_KEY) || '')
+      };
+      toast('Publishing…');
+      await ghPut(c, 'content.json', JSON.stringify(content, null, 2), 'Update portfolio content (admin)');
+      btn.classList.remove('dirty');
+      toast('✅ Published! Live site updates in ~1 minute.');
+    } catch (e) {
+      toast('Publish failed: ' + e.message, true);
+    } finally {
+      btn.disabled = false;
+    }
+  };
+
+  const b64 = s => btoa(unescape(encodeURIComponent(s)));
+  function ghHeaders(c) {
+    return { Authorization: 'Bearer ' + c.token, Accept: 'application/vnd.github+json', 'X-GitHub-Api-Version': '2022-11-28' };
+  }
+  function ghUrl(c, path) {
+    const full = (c.dir ? c.dir + '/' : '') + path;
+    return `https://api.github.com/repos/${encodeURIComponent(c.owner)}/${encodeURIComponent(c.repo)}/contents/${full.split('/').map(encodeURIComponent).join('/')}`;
+  }
+  async function ghPut(c, path, text, msg) {
+    const url = ghUrl(c, path);
+    let sha;
+    const r0 = await fetch(url + '?ref=' + encodeURIComponent(c.branch), { headers: ghHeaders(c) });
+    if (r0.ok) sha = (await r0.json()).sha;
+    else if (r0.status === 401 || r0.status === 403) throw new Error('Token rejected — check permissions (Contents: Read & write)');
+    else if (r0.status !== 404) throw new Error('GitHub error ' + r0.status);
+    const body = JSON.stringify({ message: msg, content: b64(text), branch: c.branch, sha });
+    const r = await fetch(url, { method: 'PUT', headers: Object.assign({ 'Content-Type': 'application/json' }, ghHeaders(c)), body });
+    if (!r.ok) { let m = ''; try { m = (await r.json()).message; } catch (e) {} throw new Error(`HTTP ${r.status}: ${m}`); }
+  }
+
+  /* ══════════════════════════════════════════════════════
+     ANALYTICS
+  ══════════════════════════════════════════════════════ */
   const RULES = '{\n  "rules": {\n    ".read": false, ".write": false,\n    "stats":    { ".read": true, ".write": true },\n    "presence": { ".read": true, ".write": true }\n  }\n}';
-  $('#rulesBox').value = RULES;
-  const dDb = $('#dlgDb');
-  $('#bDb').onclick = () => { $('#dbUrl').value = lget(DK); dDb.showModal(); };
-  $('#dbCancel').onclick = () => dDb.close();
-  $('#dbCopy').onclick = () => { navigator.clipboard && navigator.clipboard.writeText(RULES); msg('Rules copied'); };
-  $('#dbSave').onclick = () => {
-    const u = $('#dbUrl').value.trim().replace(/\/+$/, '');
-    if (u && !/^https:\/\/.+\.(firebaseio\.com|firebasedatabase\.app)$/.test(u)) return msg('That does not look like a Firebase Realtime Database URL', 1);
-    try { u ? localStorage.setItem(DK, u) : localStorage.removeItem(DK); } catch (e) {}
-    dDb.close(); setDirty(true); startStats(); msg(u ? 'Saved — press Publish once so visitors start being counted' : 'Analytics disconnected');
-  };
-  $('#bStats').onclick = () => $('#stats').classList.toggle('hide');
+  document.getElementById('rulesBox').value = RULES;
+  const dlgDb = document.getElementById('dlgDb');
 
-  const fmt = n => (n == null ? '–' : Number(n).toLocaleString());
+  document.getElementById('bStats').onclick  = () => document.getElementById('stats').classList.toggle('hide');
+  document.getElementById('bDb').onclick     = () => { document.getElementById('dbUrl').value = localStorage.getItem(DB_KEY) || ''; dlgDb.showModal(); };
+  document.getElementById('dbCancel').onclick = () => dlgDb.close();
+  document.getElementById('dbCopy').onclick  = () => { navigator.clipboard && navigator.clipboard.writeText(RULES); toast('Rules copied'); };
+  document.getElementById('dbSave').onclick  = () => {
+    const u = document.getElementById('dbUrl').value.trim().replace(/\/+$/, '');
+    if (u && !/^https:\/\/.+\.(firebaseio\.com|firebasedatabase\.app)$/.test(u)) return toast('Not a valid Firebase URL', true);
+    u ? localStorage.setItem(DB_KEY, u) : localStorage.removeItem(DB_KEY);
+    dlgDb.close();
+    startStats();
+    toast(u ? 'Analytics connected ✅ — publish once to activate' : 'Analytics disconnected');
+  };
+
+  const fmt = n => n == null ? '–' : Number(n).toLocaleString();
   const dayKey = o => new Date(Date.now() - o * 864e5).toISOString().slice(0, 10);
-  function paint(live, st) {
-    st = st || {}; const days = st.days || {}, dev = st.dev || {};
-    $('#sLive').textContent = fmt(live); $('#sToday').textContent = fmt(days[dayKey(0)] || 0); $('#sTotal').textContent = fmt(st.total || 0);
+
+  function paintStats(live, st) {
+    st = st || {};
+    const days = st.days || {}, dev = st.dev || {};
+    document.getElementById('sLive').textContent  = fmt(live);
+    document.getElementById('sToday').textContent = fmt(days[dayKey(0)] || 0);
+    document.getElementById('sTotal').textContent = fmt(st.total || 0);
     let s7 = 0, mx = 1; const vals = [];
     for (let i = 6; i >= 0; i--) { const v = days[dayKey(i)] || 0; vals.push([dayKey(i).slice(8), v]); s7 += v; mx = Math.max(mx, v); }
-    $('#s7').textContent = fmt(s7);
-    $('#sBars').innerHTML = vals.map(([d, v]) => `<i title="${v} views" style="height:${Math.max(7, v / mx * 100)}%"><span>${d}</span></i>`).join('');
-    const m = dev.mobile || 0, d = dev.desktop || 0, t = (m + d) || 1;
-    $('#sDev').innerHTML = `📱 Mobile <b style="font-size:13px">${Math.round(m / t * 100)}%</b> &nbsp; 💻 Desktop <b style="font-size:13px">${Math.round(d / t * 100)}%</b>`;
+    document.getElementById('s7').textContent = fmt(s7);
+    document.getElementById('sBars').innerHTML = vals.map(([d, v]) => `<i title="${v}" style="height:${Math.max(7, v / mx * 100)}%"><span>${d}</span></i>`).join('');
+    const m = dev.mobile || 0, dt = dev.desktop || 0, t = (m + dt) || 1;
+    document.getElementById('sDev').innerHTML = `📱 ${Math.round(m / t * 100)}%&nbsp;&nbsp;💻 ${Math.round(dt / t * 100)}%`;
   }
-  let timer = 0, demoState = null;
-  function note(tag, text, btn) { $('#statTag').innerHTML = tag ? `<span class="tag">${tag}</span>` : ''; $('#statText').textContent = text; $('#bDb').style.display = btn ? '' : 'none'; }
-  async function poll(db) {
+  function setNote(tag, text) {
+    document.getElementById('statTag').innerHTML  = tag ? `<span class="tag">${tag}</span>` : '';
+    document.getElementById('statText').textContent = text;
+  }
+
+  let statsTimer = 0;
+  async function pollStats(db) {
     try {
-      const [p, st] = await Promise.all([fetch(db + '/presence.json').then(r => { if (!r.ok) throw 0; return r.json(); }), fetch(db + '/stats.json').then(r => { if (!r.ok) throw 0; return r.json(); })]);
-      const now = Date.now(); let live = 0; const stale = [];
-      Object.entries(p || {}).forEach(([k, v]) => { if (v && now - v.t < 50000) live++; else if (!v || now - v.t > 600000) stale.push(k); });
-      stale.slice(0, 20).forEach(k => fetch(db + '/presence/' + k + '.json', { method: 'DELETE' }).catch(() => {}));
-      paint(live, st); note('', 'Live — refreshes every 5 seconds. A visitor counts as "viewing now" for ~50 s after their last heartbeat.', true);
-    } catch (e) { paint(null, null); note('ERROR', 'Could not read the database. Check the URL and that the rules are published.', true); }
+      const [p, st] = await Promise.all([
+        fetch(db + '/presence.json').then(r => { if (!r.ok) throw 0; return r.json(); }),
+        fetch(db + '/stats.json').then(r => { if (!r.ok) throw 0; return r.json(); })
+      ]);
+      let live = 0;
+      Object.values(p || {}).forEach(v => { if (v && Date.now() - v.t < 50000) live++; });
+      paintStats(live, st);
+      setNote('', 'Live — refreshes every 5 s');
+    } catch (e) { paintStats(null, null); setNote('ERROR', 'Cannot reach database — check URL & rules'); }
   }
+
   function startStats() {
-    clearInterval(timer);
-    if (DEMO) {
-      demoState = demoState || { live: 4, today: 37, days: {}, total: 1284 };
-      const tick = () => { demoState.live = Math.max(1, demoState.live + Math.round(Math.random() * 2 - 1)); if (Math.random() > .6) { demoState.today++; demoState.total++; }
-        const days = {}; for (let i = 0; i < 7; i++) days[dayKey(i)] = i === 0 ? demoState.today : [52, 41, 66, 38, 59, 47][i - 1];
-        paint(demoState.live, { total: demoState.total, days, dev: { mobile: 612, desktop: 672 } }); };
-      tick(); timer = setInterval(tick, 3000); note('SIMULATED', 'Demo numbers. On your site, connect Firebase to see real visitors.', true); return;
-    }
-    const db = lget(DK);
-    if (!db) { paint(null, null); note('NOT CONNECTED', 'Connect a free Firebase Realtime Database to see live viewers and view counts.', true); return; }
-    poll(db); timer = setInterval(() => poll(db), 5000);
+    clearInterval(statsTimer);
+    const db = localStorage.getItem(DB_KEY);
+    if (!db) { paintStats(null, null); setNote('NOT CONNECTED', 'Connect Firebase to see live stats'); return; }
+    pollStats(db);
+    statsTimer = setInterval(() => pollStats(db), 5000);
   }
   startStats();
+
+  /* ══════════════════════════════════════════════════════
+     BOOT
+  ══════════════════════════════════════════════════════ */
+  populateForms();
+
+  // Show dirty indicator if there's a saved state different from defaults
+  if (localStorage.getItem(STORE_KEY)) {
+    document.getElementById('bPublish').classList.add('dirty');
+  }
+
+  console.log('%c✅ Portfolio Admin loaded', 'color:#22D3EE;font-weight:bold;font-size:14px');
 })();
 </script>
 </body>

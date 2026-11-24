@@ -1,0 +1,33 @@
+{
+  "profile": {
+    "name": "Kamrul Hassan",
+    "email": "kamrul.hassan0244@gmail.com",
+    "github": "https://github.com/Kamrul102",
+    "linkedin": "https://www.linkedin.com/in/kamrul-hassan-4386513b7",
+    "status": "AVAILABLE FOR SOFTWARE ENGINEERING ROLES · DHAKA / REMOTE",
+    "bio": "I build web applications with React, Node.js and Firebase — from a shared-housing ledger to a concurrent seat-reservation system. CSE undergraduate at Manarat International University, graduating in 2027."
+  },
+  "analytics": {
+    "dbUrl": ""
+  },
+  "certs": [
+    {
+      "tag": "PHITRON • 2025",
+      "title": "CSE Fundamentals & Problem Solving",
+      "desc": "Data Structures, Algorithms, C++, and Python Software Engineering.",
+      "link": ""
+    },
+    {
+      "tag": "AI & ML TRACK • 2025",
+      "title": "Applied Machine Learning Specialization",
+      "desc": "Supervised Learning, Feature Engineering, and Model Evaluation Pipelines.",
+      "link": ""
+    },
+    {
+      "tag": "SECURITY & WEB • 2024",
+      "title": "Full-Stack Web & Penetration Testing",
+      "desc": "Modern React/Node Architecture & Web Application Security Fundamentals.",
+      "link": ""
+    }
+  ]
+}

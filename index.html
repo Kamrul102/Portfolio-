@@ -1537,17 +1537,40 @@ html:not(.dark) #editBar button { color: #0F172A; }
 
   <script>
     // ===== EDIT ME: site-wide settings =====
+    // ── Load admin-saved patch from localStorage (set by admin.html) ────────────
+    (function applyAdminPatch() {
+      try {
+        const raw = localStorage.getItem('kh_pending_patch');
+        if (!raw) return;
+        const patch = JSON.parse(raw);
+        if (!patch || Date.now() - (patch.patchedAt || 0) > 30 * 24 * 3600 * 1000) return; // ignore if >30 days
+        const p = patch.profile || {};
+        window.__ADMIN_PATCH__ = patch;
+      } catch (e) {}
+    })();
+
+    const _patch = window.__ADMIN_PATCH__ || {};
+    const _p     = _patch.profile || {};
+    const _ejs   = _patch.emailjs  || {};
+    const _pl    = _patch.projectLinks || {};
+
     const SITE = {
-      email: ['kamrul.hassan0244', 'gmail.com'].join('@'),   // assembled at runtime (not plain text in HTML)
-      github: 'https://github.com/Kamrul102',             
-      linkedin: 'https://www.linkedin.com/in/kamrul-hassan-4386513b7',  
-      formEndpoint: ''                                        // TODO Formspree/Web3Forms URL, e.g. https://formspree.io/f/xxxx
+      email:         _p.email    || ['kamrul.hassan0244', 'gmail.com'].join('@'),
+      github:        _p.github   || 'https://github.com/Kamrul102',
+      linkedin:      _p.linkedin || 'https://www.linkedin.com/in/kamrul-hassan-4386513b7',
+      firebaseDbUrl: _patch.firebaseDbUrl || '', // e.g. 'https://your-project-default-rtdb.firebaseio.com'
+      formEndpoint:  '',
+      emailjs: {
+        publicKey:  _ejs.publicKey  || 'YOUR_EMAILJS_PUBLIC_KEY',
+        serviceId:  _ejs.serviceId  || 'YOUR_SERVICE_ID',
+        templateId: _ejs.templateId || 'YOUR_TEMPLATE_ID'
+      }
     };
-    const PROJECT_LINKS = {                                   // empty string = button hidden
-      hisab:      { code: '', live: '' },
-      skillswap:  { code: '', live: '' },
-      campusride: { code: '', live: '' },
-      metrorail:  { code: '', live: '' }
+    const PROJECT_LINKS = {
+      hisab:      { code: (_pl.hisab      || {}).code || '', live: (_pl.hisab      || {}).live || '' },
+      skillswap:  { code: (_pl.skillswap  || {}).code || '', live: (_pl.skillswap  || {}).live || '' },
+      campusride: { code: (_pl.campusride || {}).code || '', live: (_pl.campusride || {}).live || '' },
+      metrorail:  { code: (_pl.metrorail  || {}).code || '', live: (_pl.metrorail  || {}).live || '' }
     };
     function esc(t) { return String(t).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c])); }
     function legacyCopy(text) {
@@ -2039,15 +2062,17 @@ html:not(.dark) #editBar button { color: #0F172A; }
       showToast('Portfolio updated!');
     }
 
-    // Quick Contact Form Handler
+    // Quick Contact Form Handler — with EmailJS support
     const quickContactForm = document.getElementById('quickContactForm');
     if (quickContactForm) {
       quickContactForm.addEventListener('submit', async e => {
         e.preventDefault();
-        const senderName = document.getElementById('senderName').value.trim();
-        const senderEmail = document.getElementById('senderEmail').value.trim();
+        const senderName    = document.getElementById('senderName').value.trim();
+        const senderEmail   = document.getElementById('senderEmail').value.trim();
         const senderMessage = document.getElementById('senderMessage').value.trim();
         const btn = quickContactForm.querySelector('[type="submit"]');
+
+        // ── Option A: custom formEndpoint (Formspree / Web3Forms) ──────────────
         if (SITE.formEndpoint) {
           if (btn) btn.disabled = true;
           try {
@@ -2066,7 +2091,44 @@ html:not(.dark) #editBar button { color: #0F172A; }
           }
           return;
         }
-        // Fallback (no endpoint configured): open mail app, keep the text, copy it as backup
+
+        // ── Option B: EmailJS (free, no server needed) ─────────────────────────
+        const ejs = SITE.emailjs || {};
+        if (ejs.publicKey && ejs.publicKey !== 'YOUR_EMAILJS_PUBLIC_KEY' && ejs.serviceId && ejs.templateId) {
+          if (btn) btn.disabled = true;
+          try {
+            // Lazy-load EmailJS SDK
+            if (!window.emailjs) {
+              await new Promise((res, rej) => {
+                const s = document.createElement('script');
+                s.src = 'https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js';
+                s.onload = res; s.onerror = rej;
+                document.head.appendChild(s);
+              });
+              window.emailjs.init({ publicKey: ejs.publicKey });
+            }
+            await window.emailjs.send(ejs.serviceId, ejs.templateId, {
+              from_name:  senderName,
+              from_email: senderEmail,
+              message:    senderMessage,
+              reply_to:   senderEmail
+            });
+            quickContactForm.reset();
+            showToast('✓ Message sent — I'll reply soon!');
+          } catch (err) {
+            console.error('EmailJS error:', err);
+            showToast('Send failed — opening your mail app instead');
+            const subject = `Engineering Inquiry from ${senderName}`;
+            const text = `From: ${senderName} (${senderEmail})\n\n${senderMessage}`;
+            copyText(text);
+            window.location.href = `mailto:${SITE.email}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
+          } finally {
+            if (btn) btn.disabled = false;
+          }
+          return;
+        }
+
+        // ── Fallback: open mail app + copy message to clipboard ───────────────
         const subject = `Engineering Inquiry from ${senderName}`;
         const text = `From: ${senderName} (${senderEmail})\n\n${senderMessage}`;
         copyText(text);
@@ -2390,12 +2452,47 @@ html:not(.dark) #editBar button { color: #0F172A; }
   }
 
   /* ---------- Boot ---------- */
-  initTexts(); initReveal(); renderCerts();
-  const merge = c => { if (!c) return; if (Array.isArray(c.certs)) state.certs = c.certs; if (c.texts) state.texts = c.texts; if (c.profile) state.profile = c.profile; if (c.analytics) state.analytics = c.analytics; };
+  initTexts(); initReveal();
+
+  // ── Apply admin-saved data (from admin.html via localStorage) ──
+  (function applyAdminSavedData() {
+    try {
+      const raw = localStorage.getItem('kh_admin_v1');
+      if (!raw) return;
+      const saved = JSON.parse(raw);
+      if (saved.certs && Array.isArray(saved.certs)) state.certs = saved.certs;
+      if (saved.profile) {
+        const p = saved.profile;
+        if (p.name) {
+          const navName = document.getElementById('navName');
+          if (navName) navName.textContent = p.name;
+          const heroDisplay = document.getElementById('heroDisplayName');
+          if (heroDisplay) {
+            const parts = p.name.split(/\s+/);
+            if (parts.length > 1) { const last = parts.pop(); heroDisplay.innerHTML = parts.join(' ') + ' <span class="text-cyan-400">' + last + '</span>'; }
+            else heroDisplay.textContent = p.name;
+          }
+        }
+        if (p.email) { const el = document.getElementById('contactEmailText'); if (el) el.textContent = p.email; }
+        if (p.status) { const el = document.getElementById('heroStatusPill'); if (el) el.textContent = p.status; }
+      }
+    } catch (e) {}
+  })();
+
+  renderCerts();
+  const merge = c => {
+    if (!c) return;
+    if (Array.isArray(c.certs)) state.certs = c.certs;
+    if (c.texts) state.texts = c.texts;
+    if (c.profile) state.profile = c.profile;
+    if (c.analytics) state.analytics = c.analytics;
+    else if (c.dbUrl) state.analytics = { dbUrl: c.dbUrl };
+  };
   const done = () => {
     if (admin) { try { merge(JSON.parse(localStorage.getItem(DRAFT))); } catch (e) {} }
     renderCerts(); applyTexts(); applyProfile();
-    if (state.analytics && state.analytics.dbUrl) track(state.analytics.dbUrl);
+    const activeDb = (state.analytics && state.analytics.dbUrl) || SITE.firebaseDbUrl || (function(){ try { return localStorage.getItem('kh_db_url'); } catch(e){ return ''; } })();
+    if (activeDb) track(activeDb);
     if (admin) parent.postMessage({ kh: 'ready' }, '*');
   };
   let fin = false; const once = () => { if (!fin) { fin = true; done(); } };
