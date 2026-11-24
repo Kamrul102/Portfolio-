@@ -562,6 +562,7 @@ html:not(.dark) #editBar button { color: #0F172A; }
         <a href="#leadership" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Leadership</a>
         <a href="#certificates" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Certificates</a>
         <a href="#contact" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Contact</a>
+        <a href="admin.html" class="col-span-2 block px-3 py-2 rounded-xl text-[13px] font-bold text-cyan-300 hover:bg-cyan-500/15 border border-cyan-500/20 text-center mt-1">🔐 Admin Hub Dashboard ↗</a>
       </div>
     </div>
   </header>
@@ -1980,7 +1981,10 @@ html:not(.dark) #editBar button { color: #0F172A; }
     });
 
     document.addEventListener('keydown', e => {
-      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+      if ((e.metaKey || e.ctrlKey) && e.shiftKey && e.key.toLowerCase() === 'a') {
+        e.preventDefault();
+        window.open('admin.html', '_blank');
+      } else if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
         e.preventDefault();
         cmdBackdrop.classList.contains('hidden') ? openCmdPalette() : closeCmdPalette();
       } else if (e.key === 'Escape') {
@@ -2004,6 +2008,7 @@ html:not(.dark) #editBar button { color: #0F172A; }
         closeCmdPalette();
         if (action === 'resume') openResumeModal();
         else if (action === 'email') copyEmailAddress();
+        else if (action === 'admin') window.open('admin.html', '_blank');
         else location.hash = '#' + action;
       });
     });
@@ -2160,12 +2165,6 @@ html:not(.dark) #editBar button { color: #0F172A; }
 
     function exportStandaloneHtml() {
       const clone = document.documentElement.cloneNode(true);
-      clone.querySelectorAll('img[data-portr}?subject=${encodeURIComponent(subject)}&body=${encodeURIComponent(text)}`;
-      });
-    }
-
-    function exportStandaloneHtml() {
-      const clone = document.documentElement.cloneNode(true);
       clone.querySelectorAll('img[data-portrait="true"]').forEach(img => {
         if ((img.getAttribute('src') || '').startsWith('blob:')) img.setAttribute('src', 'portrait.jpg');
       });
@@ -2238,9 +2237,31 @@ html:not(.dark) #editBar button { color: #0F172A; }
         b.setAttribute('aria-label', 'Seat ' + b.dataset.seat + (b.classList.contains('taken') ? ' (taken)' : '')));
       const mt = document.getElementById('mobileMenuToggle'), md = document.getElementById('mobileNavDrawer');
       if (mt && md) {
-        mt.setAttribute('aria-expanded', 'false'); mt.setAttribute('aria-controls', 'mobileNavDrawer');
-        const sync = () => setTimeout(() => mt.setAttribute('aria-expanded', String(!md.classList.contains('hidden'))), 0);
-        mt.addEventListener('click', sync); md.addEventListener('click', sync);
+        mt.setAttribute('aria-expanded', 'false');
+        mt.setAttribute('aria-controls', 'mobileNavDrawer');
+
+        // Toggle mobile drawer on button click
+        mt.addEventListener('click', (e) => {
+          e.stopPropagation();
+          const isClosed = md.classList.toggle('hidden');
+          mt.setAttribute('aria-expanded', String(!isClosed));
+        });
+
+        // Close drawer when any nav link is tapped
+        md.querySelectorAll('.mobile-nav-link').forEach(link => {
+          link.addEventListener('click', () => {
+            md.classList.add('hidden');
+            mt.setAttribute('aria-expanded', 'false');
+          });
+        });
+
+        // Close drawer when clicking outside
+        document.addEventListener('click', (e) => {
+          if (!md.classList.contains('hidden') && !md.contains(e.target) && !mt.contains(e.target)) {
+            md.classList.add('hidden');
+            mt.setAttribute('aria-expanded', 'false');
+          }
+        });
       }
 
       // Dialogs: focus on open, trap Tab, restore focus on close
@@ -2522,4 +2543,11 @@ html:not(.dark) #editBar button { color: #0F172A; }
     if (activeDb) track(activeDb);
     if (admin) parent.postMessage({ kh: 'ready' }, '*');
   };
-  let fin = false; const once = () => { if 
+  let fin = false; const once = () => { if (!fin) { fin = true; done(); } };
+  setTimeout(once, 2500);
+  fetch('content.json?v=' + Date.now(), { cache: 'no-store' }).then(r => r.ok ? r.json() : null).then(c => { merge(c); once(); }).catch(once);
+})();
+
+  </script>
+</body>
+</html>
