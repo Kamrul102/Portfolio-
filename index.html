@@ -542,6 +542,7 @@ html:not(.dark) #editBar button { color: #0F172A; }
           <button
             id="mobileMenuToggle"
             type="button"
+            onclick="window.toggleMobileMenu(event)"
             aria-label="Toggle Menu"
             class="lg:hidden text-slate-100 hover:text-cyan-300 flex items-center justify-center transition cursor-pointer shrink-0 bg-transparent border-0 p-1"
           >
@@ -554,18 +555,43 @@ html:not(.dark) #editBar button { color: #0F172A; }
 
       <!-- Mobile Dropdown Glass Menu -->
       <div id="mobileNavDrawer" class="hidden lg:hidden mt-2 p-2.5 rounded-2xl border border-blue-500/20 bg-[#080E1E]/95 backdrop-blur-2xl shadow-2xl grid grid-cols-2 gap-1">
-        <a href="#home" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Home</a>
-        <a href="#about" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">About</a>
-        <a href="#skills" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Skills</a>
-        <a href="#education" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Education</a>
-        <a href="#research" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Research</a>
-        <a href="#leadership" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Leadership</a>
-        <a href="#certificates" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Certificates</a>
-        <a href="#contact" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Contact</a>
+        <a href="#home" onclick="window.closeMobileMenu()" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Home</a>
+        <a href="#about" onclick="window.closeMobileMenu()" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">About</a>
+        <a href="#skills" onclick="window.closeMobileMenu()" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Skills</a>
+        <a href="#education" onclick="window.closeMobileMenu()" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Education</a>
+        <a href="#research" onclick="window.closeMobileMenu()" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Research</a>
+        <a href="#leadership" onclick="window.closeMobileMenu()" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Leadership</a>
+        <a href="#certificates" onclick="window.closeMobileMenu()" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Certificates</a>
+        <a href="#contact" onclick="window.closeMobileMenu()" class="mobile-nav-link block px-3 py-2 rounded-xl text-[14px] font-bold text-slate-100 hover:bg-blue-500/15">Contact</a>
         <a href="admin.html" class="col-span-2 block px-3 py-2 rounded-xl text-[13px] font-bold text-cyan-300 hover:bg-cyan-500/15 border border-cyan-500/20 text-center mt-1">🔐 Admin Hub Dashboard ↗</a>
       </div>
     </div>
   </header>
+
+  <script>
+    window.toggleMobileMenu = function(e) {
+      if (e) e.stopPropagation();
+      var md = document.getElementById('mobileNavDrawer');
+      var mt = document.getElementById('mobileMenuToggle');
+      if (!md) return;
+      var isClosed = md.classList.toggle('hidden');
+      if (mt) mt.setAttribute('aria-expanded', String(!isClosed));
+    };
+    window.closeMobileMenu = function() {
+      var md = document.getElementById('mobileNavDrawer');
+      var mt = document.getElementById('mobileMenuToggle');
+      if (md) md.classList.add('hidden');
+      if (mt) mt.setAttribute('aria-expanded', 'false');
+    };
+    document.addEventListener('click', function(e) {
+      var md = document.getElementById('mobileNavDrawer');
+      var mt = document.getElementById('mobileMenuToggle');
+      if (md && !md.classList.contains('hidden') && !md.contains(e.target) && !mt.contains(e.target)) {
+        md.classList.add('hidden');
+        if (mt) mt.setAttribute('aria-expanded', 'false');
+      }
+    });
+  </script>
 
   <!-- =====================================================================
        1. ASYMMETRIC SPLIT HERO: LEFT IDENTITY & DETAILS | RIGHT 3D PORTRAIT
@@ -2239,29 +2265,7 @@ html:not(.dark) #editBar button { color: #0F172A; }
       if (mt && md) {
         mt.setAttribute('aria-expanded', 'false');
         mt.setAttribute('aria-controls', 'mobileNavDrawer');
-
-        // Toggle mobile drawer on button click
-        mt.addEventListener('click', (e) => {
-          e.stopPropagation();
-          const isClosed = md.classList.toggle('hidden');
-          mt.setAttribute('aria-expanded', String(!isClosed));
-        });
-
-        // Close drawer when any nav link is tapped
-        md.querySelectorAll('.mobile-nav-link').forEach(link => {
-          link.addEventListener('click', () => {
-            md.classList.add('hidden');
-            mt.setAttribute('aria-expanded', 'false');
-          });
-        });
-
-        // Close drawer when clicking outside
-        document.addEventListener('click', (e) => {
-          if (!md.classList.contains('hidden') && !md.contains(e.target) && !mt.contains(e.target)) {
-            md.classList.add('hidden');
-            mt.setAttribute('aria-expanded', 'false');
-          }
-        });
+      }
       }
 
       // Dialogs: focus on open, trap Tab, restore focus on close
